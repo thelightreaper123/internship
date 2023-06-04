@@ -1,0 +1,17 @@
+#input {
+resize: none;
+height: 30px;
+width: 200px;
+}
+
+
+#btn1{
+    background-color: hsl(107, 49%, 39%);
+    padding: 3px;
+    border: 1px solid black;
+    cursor: pointer;
+  }
+
+  #tasks{
+    margin-top: 25px; 
+  }
