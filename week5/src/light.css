@@ -1,0 +1,73 @@
+
+.body{
+    height: 800px;
+    width: 100%;
+    margin-top: -22px;
+}
+ .body:has(.light){
+    background:
+    linear-gradient(red, transparent),
+    linear-gradient(to top left, lime, transparent),
+    linear-gradient(to top right, blue, transparent);
+background-blend-mode: screen;
+ }
+
+ .body:has(.dark){
+    background-color:rgb(0, 0, 0) ;
+    color: white;
+ }
+
+.main{
+    margin-inline: auto;
+    width: 400px;
+    text-align: center;
+}
+
+.light{
+    background:
+    linear-gradient(to top left, lime, transparent),
+    linear-gradient(to top right, blue, transparent);
+background-blend-mode: screen;
+box-shadow: 0px 0px 12px black;
+color: black;
+}
+
+.dark{
+    box-shadow: 0px 0px 12px white;
+    background-color: rgb(0, 0, 0);
+    color: white;
+}
+
+
+input {
+    margin-bottom: 20px;
+    margin-right: 4px;
+}
+
+li {
+    margin: 12px 0;
+}
+
+#DeleteButton{
+    margin-left: 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: white;
+}
+
+h2{
+    text-align: center;
+    padding: 1rem;
+}
+
+.theme-toggle{
+   text-align: center;
+    }
+
+    #togg{
+        border: none;
+        background: none;
+       cursor: pointer;
+       font-size: 2rem;
+         }
