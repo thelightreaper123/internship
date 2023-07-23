@@ -7,13 +7,15 @@ import{FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 
 function App() {
-  const storedTask = JSON.parse(localStorage.getItem('items'));
+  const storedTask = JSON.parse(localStorage.getItem('items')); 
   const [tasks, setNewitem]= useState("");
-  const [items, setItems] = useState(storedTask);
+  const [items, setItems] = useState(storedTask,[]);
   useEffect(() => {
     localStorage.setItem('items', JSON.stringify(items));
     
   }, [items]);
+
+
 
   function additem(){
     if (!tasks){
@@ -27,11 +29,14 @@ function App() {
     setItems(oldList => [...oldList, item]);
     setNewitem("");
    }
+
+   
   
    function deleteitem(id){
   const newArray = items.filter(item => item.id !== id);
   setItems(newArray);
    } 
+   
   return (
     <div className='Main'>
     <div className='header'>
@@ -45,7 +50,7 @@ function App() {
     {items.map(item=>{
       return(
         <div>
-          <List item={item} deleteit = {deleteitem}/><Link to={`/${item.id}`}><p>EXPAND</p></Link>
+          <List item={item} deleteit = {deleteitem}/><Link to={`/task:/${item.id}`}><p>EXPAND</p></Link>
         </div>
       )
     })}

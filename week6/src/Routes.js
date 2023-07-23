@@ -1,25 +1,24 @@
 import App from './App'
 import Task from './Task';
 import { BrowserRouter as Router, Route, Switch, createBrowserRouter, RouterProvider, createRoutesFromElements, Link} from 'react-router-dom';
+import NotFound from './NotFound';
 
 
-//components
-//import Notfound from './components/Notfound';
-//pages
-//import Piece from './Piece';
 
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route exact path='/'>
+      <Route exact path='/' errorElement={<NotFound/>}>
         <Route 
         index
         element={<App/>}
         />
         <Route 
-        path='/:id'
+        path='/task:/:id'
         
         element={<Task/>}
         />
+
+        <Route path='/:*' element={<NotFound/>}/>
   
       </Route>
     )
