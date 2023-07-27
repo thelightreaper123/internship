@@ -7,25 +7,28 @@ import{FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 
 function App() {
-  const storedTask = JSON.parse(localStorage.getItem('items')); 
+  const storedTask = JSON.parse(localStorage.getItem('items')) || []
   const [tasks, setNewitem]= useState("");
-  const [items, setItems] = useState(storedTask,[]);
+  const [items, setItems] = useState(storedTask);
   useEffect(() => {
     localStorage.setItem('items', JSON.stringify(items));
     
   }, [items]);
 
 
+  
 
   function additem(){
     if (!tasks){
       alert("please input task!");
       return;
     }
+
     const item = {
       id: Math.floor(Math.random() * 1000),
       value: tasks
     };
+    
     setItems(oldList => [...oldList, item]);
     setNewitem("");
    }
@@ -36,6 +39,8 @@ function App() {
   const newArray = items.filter(item => item.id !== id);
   setItems(newArray);
    } 
+
+   
    
   return (
     <div className='Main'>
@@ -46,16 +51,19 @@ function App() {
    
    </div>
    <div className='body'>
-   <ul>
-    {items.map(item=>{
+<ul>
+  
+    {
+      
+      items.map(item=>{
       return(
         <div>
-          <List item={item} deleteit = {deleteitem}/><Link to={`/task:/${item.id}`}><p>EXPAND</p></Link>
+          <List item={item} deleteit = {deleteitem}/><Link to={`/task/${item.id}`}><p>EXPAND</p></Link>
         </div>
       )
     })}
    
-    </ul>
+</ul>
     </div>
     </div>
     

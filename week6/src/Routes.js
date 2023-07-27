@@ -13,13 +13,9 @@ import NotFound from './NotFound';
         element={<App/>}
         />
         <Route 
-        path='/task:/:id'
-        
+        path='/task/:id'
         element={<Task/>}
         />
-
-        <Route path='/:*' element={<NotFound/>}/>
-  
       </Route>
     )
   )
