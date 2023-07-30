@@ -58,7 +58,7 @@ function App() {
       items.map(item=>{
       return(
         <div>
-          <List item={item} deleteit = {deleteitem}/><Link to={`/task/${item.id}`}><p>EXPAND</p></Link>
+          <List item={item} deleteit = {deleteitem}/><Link to={`/${item.value}`}><p>EXPAND</p></Link>
         </div>
       )
     })}

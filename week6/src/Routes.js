@@ -13,7 +13,7 @@ import NotFound from './NotFound';
         element={<App/>}
         />
         <Route 
-        path='/task/:id'
+        path='/:value'
         element={<Task/>}
         />
       </Route>
