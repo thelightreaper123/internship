@@ -1,6 +1,6 @@
 import App from './App'
 import Task from './Task';
-import { BrowserRouter as Router, Route, Switch, createBrowserRouter, RouterProvider, createRoutesFromElements, Link} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, createBrowserRouter, RouterProvider, createRoutesFromElements, Link, useParams} from 'react-router-dom';
 import NotFound from './NotFound';
 
 
@@ -13,11 +13,14 @@ import NotFound from './NotFound';
         element={<App/>}
         />
         <Route 
-        path='/:value'
+        path='/:id'
         element={<Task/>}
         />
+        <Route
+        Component={NotFound}
+        />
       </Route>
-    )
+    ),
   )
   function Routes() {
     

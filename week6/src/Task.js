@@ -6,27 +6,27 @@ import {useRouteError} from "react-router-dom"
 
 export default function Task() 
 {
+  let check = true;
   const error = useRouteError();
-  const { value } = useParams();
+  const { id } = useParams();
   const storedTask = JSON.parse(localStorage.getItem('items'));
-  return Object.keys(storedTask).map((obj, i)=>{
-    if(storedTask[obj].value ==value){
-      return (
-        <div className='taskpage'>
-          <h1>{storedTask[obj].value}</h1>
-          <hr></hr>
-        </div>
-       )
-    }
-    else{
-      return(
-        <div>
-           <h1>404</h1>
-        <h2>PAGE NOT FOUND</h2>
-        <p>it appears the task you are looking for does not exist</p>
-        <p>Click link to go back to <Link to='/'>HomePage</Link></p>
-        </div>
-       );
-    }
-  })
+  const specificTask = storedTask.find((specificTask)=> specificTask.id == id);
+  if(specificTask){
+    return (
+      <div className='taskpage'>
+        <h1>{specificTask.value}</h1>
+        <hr></hr>
+      </div>
+     )
+  }
+  else{
+    return(
+      <div>
+         <h1>404</h1>
+      <h2>PAGE NOT FOUND</h2>
+      <p>it appears the task you are looking for does not exist</p>
+      <p>Click link to go back to <Link to='/'>HomePage</Link></p>
+      </div>
+     );
+  }
 }
