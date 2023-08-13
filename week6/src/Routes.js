@@ -1,6 +1,6 @@
 import App from './App'
 import Task from './Task';
-import { BrowserRouter as Router, Route, Switch, createBrowserRouter, RouterProvider, createRoutesFromElements, Link, useParams} from 'react-router-dom';
+import { BrowserRouter as Router, Route,createBrowserRouter, RouterProvider, createRoutesFromElements} from 'react-router-dom';
 import NotFound from './NotFound';
 
 
