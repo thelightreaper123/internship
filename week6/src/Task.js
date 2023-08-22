@@ -8,14 +8,21 @@ export default function Task()
   const { id } = useParams();
   const storedTask = JSON.parse(localStorage.getItem('items'));
   const specificTask = storedTask.find((specificTask)=> specificTask.id == id);
-  const storedDescription = JSON.parse(localStorage.getItem('descript'));
+  const storedDescription = JSON.parse(localStorage.getItem('narration'));
   const specificDescription = storedDescription.find((specificDescription)=> specificDescription.id == id);
+  const storedDate = JSON.parse(localStorage.getItem('date'));
+  const specificDate = storedDate.find((specificDate)=> specificDate.id == id);
   if(specificTask && specificDescription){
     return (
       <div className='taskpage'>
         <h1>{specificTask.value}</h1>
         <hr></hr>
         <p>{specificDescription.value}</p>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <p>created on:{specificDate.value}</p>
       </div>
      )
   }
