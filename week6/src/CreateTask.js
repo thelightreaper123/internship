@@ -82,6 +82,7 @@ function CreateTask({modal,toggle}) {
       
       setDate(oldList => [...oldList, period]);
       setNewDate("");
+      toggle();
    }
    function Delete(id){
     const newArray1 = items.filter(item => item.id !== id);
