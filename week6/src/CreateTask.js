@@ -43,19 +43,19 @@ function CreateTask({modal,toggle}) {
         alert("please input date!");
         return;
       }
-    const taskinput = /^(?=.*[a-z])/;
+    const taskinput = /^(?=.*[a-zA-Z0-9])/;
     if (!taskinput.test(tasks)){
-      alert('task must contain at least one letter in');
+      alert('task cannot be empty');
       return;
     }
-    const descriptionInput = /^(?=.*[a-z])/;
+    const descriptionInput = /^(?=.*[a-zA-Z0-9])/;
       if (!descriptionInput.test(descriptions)){
-        alert('description must contain at least one letter');
+        alert('description cannot be empty');
         return;
       }
       const dateInput = /^(?=.*[0-9])/;
       if (!dateInput.test(time)){
-        alert('date must contain at least one digit');
+        alert('date cannot be empty');
         return;
       }
 
@@ -105,7 +105,7 @@ function CreateTask({modal,toggle}) {
           <label>Description</label>
           <textarea rows="5" className='form-control' value={descriptions} onChange={e => setNewDescription(e.target.value)}></textarea>
           <label>Date created</label>
-          <textarea rows="2" className='form-control' value={time} onChange={e => setNewDate(e.target.value)}></textarea>
+          <input type='date' rows="2" className='form-control' value={time} onChange={e => setNewDate(e.target.value)}></input>
           </form>
         </ModalBody>
         <ModalFooter>
