@@ -1,0 +1,100 @@
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.header{
+background-color: black;
+height: fit-content;
+width: 100%;
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+color: white;
+}
+
+.body{
+  background: linear-gradient(to top left, lime, transparent),
+  linear-gradient(to top right, blue, transparent);
+background-blend-mode: screen;
+  width: 100%;
+  height: 650px;
+}
+
+
+
+.input-1{
+  border: none;
+  margin-top: 20px;
+  margin-left: 270px;
+  margin-bottom: 20px;
+  width: 800px;
+  height: 30px;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
+  text-align: center;
+  font-size: large;
+}
+.input-2{
+  border: none;
+  margin-top: 20px;
+  margin-left: 70px;
+  margin-bottom: 20px;
+  width: 800px;
+  height: 30px;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
+  text-align: center;
+  font-size: large;
+}
+
+#AddButton{
+  border: none;
+  height: 30px;
+  width: 50px;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  font-size: large;
+}
+
+#DeleteButton{
+  margin-left: 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: rgb(0, 0, 0);
+}
+#editButton{
+  margin-left: 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: rgb(0, 0, 0);
+}
+
+li{
+  font-size: 30px;
+  margin-left: 10px;
+}
+
+.taskpage{
+  background: linear-gradient(to top left, lime, transparent),
+  linear-gradient(to top right, blue, transparent);
+background-blend-mode: screen;
+  height: 690px;
+  width: 100%;
+  text-align: center;
+  font-size: 30px;
+  color: white;
+}
+
+hr{
+  border: 1px solid;
+}
+
+.create-task-btn{
+  border: none;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  margin-left: 20px;
+  width: 150px;
+}
