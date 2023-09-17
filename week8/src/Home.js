@@ -1,19 +1,31 @@
-import React,{useState,useEffect} from "react";
+import React,{useState} from "react";
 import { Form } from "react-bootstrap";
-import MovieBox from "./MovieBox";
-
+import MovieResult from "./MovieResult";
+import { ToastContainer,toast} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"
 function Home() {
     const [movies, setMovies]= useState([]);
     const [title, setTitle]= useState('');
-    const getMovie=()=>{
-        fetch(`https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=`)
-        .then(res=> res.json())
-        .then(json => console.log(json))
-    }
-useEffect(()=>{
-    getMovie()
-    console.log(process.env.REACT_APP_API_KEY)
-},[])
+    const notFound =()=>{
+        toast.error('result not found',{
+            position: "top-right", 
+            autoClose: 5000,       
+            hideProgressBar: false, 
+            closeOnClick: true,    
+            pauseOnHover: true,    
+            draggable: false,       
+    });
+}
+const apiError =()=>{
+    toast.error('ERROR! Check your internet connection or try again later',{
+        position: "top-right", 
+        autoClose: 5000,       
+        hideProgressBar: false, 
+        closeOnClick: true,    
+        pauseOnHover: true,    
+        draggable: false,       
+});
+}
 const searchMovie = async(e)=>{
     e.preventDefault();
     try{
@@ -21,20 +33,23 @@ const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831
 const res=await fetch(url);
 const data = await res.json();
 setMovies(data.results)
-console.log(data);
+if(data.total_results==0){
+    notFound();
+}
     }catch(e){
-console.log(e)
+   apiError();
     }
 }
     return ( 
         <div className="main">
 <Form onSubmit={searchMovie}>
 <input className="search-bar" type="text" placeholder="Search movies" value={title} onChange={e => setTitle(e.target.value)} name="title"></input>
-<button>Search</button>
+<button className="srch-btn">Search</button>
 </Form>
-    <div>
-        {movies.map((movieReq)=><MovieBox key={movieReq.id} {...movieReq}/>)}
+    <div className="container">
+        {movies.map((movieReq)=><MovieResult key={movieReq.id} {...movieReq}/>)}
     </div>
+    <ToastContainer/>
         </div>
      );
 }

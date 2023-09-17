@@ -2,10 +2,11 @@ body, html {
   margin: 0;
   padding: 0;
   height: 100%;
+  color: white;
 }
 
 .main{
-  background-color: rgb(61, 0, 61);
+  background-color: rgb(0, 0, 0);
   width: 100%;
 min-height: 100vh;
 max-height: fit-content;
@@ -13,8 +14,23 @@ justify-content: center;
 }
 
 .search-bar{
-  height: 30px;
+  background-color: rgb(141, 213, 241);
+  height: 28px;
   width: 400px;
-  border-radius:11px;
   border: none;
+  outline: none;
+}
+.srch-btn{
+  border: none;
+  height: 30px;
+  width: 50px;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+.container{
+  margin-top: 20px;
+  display: grid;
+  margin-left: .5px;
+  grid-template-columns: repeat(3,1fr);
+  justify-content: center;
 }
