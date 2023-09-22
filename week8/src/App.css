@@ -15,22 +15,28 @@ justify-content: center;
 
 .search-bar{
   background-color: rgb(141, 213, 241);
-  height: 28px;
+  height: 29px;
   width: 400px;
   border: none;
   outline: none;
 }
 .srch-btn{
   border: none;
-  height: 30px;
+  height: 29px;
   width: 50px;
   border-top-right-radius: 15px;
   border-bottom-right-radius: 15px;
+  font-size: 13px;
+}
+.page-bar{
+  border: none;
+  width: 50px;
+  outline: none;
 }
 .container{
-  margin-top: 20px;
   display: grid;
   margin-left: .5px;
   grid-template-columns: repeat(3,1fr);
+  grid-gap: 0.2em;
   justify-content: center;
 }
