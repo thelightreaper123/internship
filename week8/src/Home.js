@@ -3,13 +3,12 @@ import { Form } from "react-bootstrap";
 import MovieResult from "./MovieResult";
 import { ToastContainer,toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"
+import ReactPaginate from 'react-paginate';
 function Home() {
     const [movies, setMovies]= useState([]);
     const [title, setTitle]= useState('');
-    const [title2, setTitle2]= useState(title);
-    const [page,setPage]=useState(1);
     const [searchHistory]=useState([]);
-    const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${title}&page=${page}`
+    const [totalPages, setTotalPages] = useState(1);
     const notFound =()=>{
         toast.error('result not found',{
             position: "top-right", 
@@ -20,8 +19,8 @@ function Home() {
             draggable: false,       
     });
 }
-const noPages =()=>{
-    toast.error(`page no ${page} of ${title} does not exist`,{
+const noInput =()=>{
+    toast.error('search cannot be empty',{
         position: "top-right", 
         autoClose: 5000,       
         hideProgressBar: false, 
@@ -43,24 +42,38 @@ const apiError =()=>{
 const searchMovie = async(e)=>{
     e.preventDefault();
     try{
-
+        const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${title}`        
 const res=await fetch(url);
 const data = await res.json();
+const SearchInput = /^(?=.*[a-zA-Z0-9])/;
+    if (!SearchInput.test(title)){
+      noInput();
+      return;
+    }
 setMovies(data.results)
+setTotalPages(data.total_pages);
 if(data.total_results==0){
     notFound();
-}
-if(data.results==0){
-    noPages();
 }
     }catch(e){
    apiError();
     }
 }
+
 function saveUserSearch(){
-searchHistory.push(title);
+    if(title==''){
+        return;
+    }else{
+        searchHistory.push(title);
+    }
 }
 let lastFiveSearches = searchHistory.slice(-5);
+    const handlePageChange = (selectedPage) => {
+        const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${title}&page=${selectedPage.selected + 1}`
+        return fetch(url)
+        .then((res)=> res.json())
+        .then((data)=>setMovies(data.results))  
+    };
     return ( 
         <div className="main">
 <Form onSubmit={searchMovie}>
@@ -73,12 +86,28 @@ let lastFiveSearches = searchHistory.slice(-5);
 <ul>{lastFiveSearches.map(e => { return <li>{e}</li>})}</ul>
 </div>)
 }
-<input className="page-bar" type="number" value={page} onChange={e => setPage(e.target.value)} name="page" onClick={searchMovie} on min="1"></input>
 </Form>
     <div className="container">
         {movies.map((movieReq)=><MovieResult key={movieReq.id} {...movieReq}/>)}
     </div>
     <ToastContainer/>
+    <ReactPaginate
+        pageCount={totalPages}
+        onPageChange={handlePageChange}
+        previousLabel={"previous"}
+        nextLabel={"next"}
+        breakLabel={"..."}
+        containerClassName={"pagination justify-content-center"}
+        pageClassName={"page-item"}
+        pageLinkClassName={"page-link"}
+        previousClassName={"page-item"}
+        previousLinkClassName={"page-link"}
+        nextClassName={"page-item"}
+        nextLinkClassName={"page-link"}
+        breakClassName={"page-item"}
+        breakLinkClassName={"page-link"}
+        activeClassName={"active"}
+    />
         </div>
      );
 }
