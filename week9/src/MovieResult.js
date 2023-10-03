@@ -14,7 +14,7 @@ function MovieResult({title, poster_path, vote_average, release_date,overview}) 
 
     return ( 
 <div>
-    <h1 onClick={handleShow}>{title}</h1>
+    <h1 style={{color:"white"}} onClick={handleShow}>{title}</h1>
     <img src={API_IMG+poster_path} style={imageStyle}></img>
     <div className="card-body">
     <Modal show={show} onHide={handleClose}>

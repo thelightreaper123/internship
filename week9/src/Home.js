@@ -8,7 +8,10 @@ function Home() {
     const [movies, setMovies]= useState([]);
     const [title, setTitle]= useState('');
     const [searchHistory]=useState([]);
-    const [totalPages, setTotalPages] = useState(1);
+    const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+
     const notFound =()=>{
         toast.error('result not found',{
             position: "top-right", 
@@ -41,24 +44,30 @@ const apiError =()=>{
 }
 const searchMovie = async(e)=>{
     e.preventDefault();
+    setLoading(true);
     try{
         const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${title}`        
 const res=await fetch(url);
 const data = await res.json();
+console.log(data);
 const SearchInput = /^(?=.*[a-zA-Z0-9])/;
     if (!SearchInput.test(title)){
       noInput();
       return;
     }
+setPage(page + 1);
 setMovies(data.results)
-setTotalPages(data.total_pages);
 if(data.total_results==0){
     notFound();
 }
+setLoading(false);
+setHasMore(true);
     }catch(e){
    apiError();
     }
+    
 }
+
 
 function saveUserSearch(){
     if(title==''){
@@ -68,12 +77,25 @@ function saveUserSearch(){
     }
 }
 let lastFiveSearches = searchHistory.slice(-5);
-    const handlePageChange = (selectedPage) => {
-        const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${title}&page=${selectedPage.selected + 1}`
-        return fetch(url)
-        .then((res)=> res.json())
-        .then((data)=>setMovies(data.results))  
-    };
+const HandleScroll = () => {
+    setPage(page + 1);
+    const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${title}&page=${page}`
+    return fetch(url)
+    .then((res)=> res.json())
+    .then((data)=>setMovies(data.results));
+}
+window.onscroll=() => {
+    if (
+      window.innerHeight + window.scrollY ===
+      document.documentElement.scrollHeight
+    ) {
+      if (!loading && hasMore) {
+       
+        HandleScroll();
+      }
+      
+    }
+  };
     return ( 
         <div className="main">
 <Form onSubmit={searchMovie}>
@@ -82,32 +104,16 @@ let lastFiveSearches = searchHistory.slice(-5);
 <br></br>
 {lastFiveSearches.length !== 0 && 
 (<div>
-<span>your last {lastFiveSearches.length} searches are</span>
-<ul>{lastFiveSearches.map(e => { return <li>{e}</li>})}</ul>
+<span style={{color:"white"}}>your last {lastFiveSearches.length} searches are</span>
+<ul>{lastFiveSearches.map(e => { return <li style={{color:"white"}}>{e}</li>})}</ul>
 </div>)
 }
 </Form>
     <div className="container">
         {movies.map((movieReq)=><MovieResult key={movieReq.id} {...movieReq}/>)}
     </div>
-    <ToastContainer/>
-    <ReactPaginate
-        pageCount={totalPages}
-        onPageChange={handlePageChange}
-        previousLabel={"previous"}
-        nextLabel={"next"}
-        breakLabel={"..."}
-        containerClassName={"pagination justify-content-center"}
-        pageClassName={"page-item"}
-        pageLinkClassName={"page-link"}
-        previousClassName={"page-item"}
-        previousLinkClassName={"page-link"}
-        nextClassName={"page-item"}
-        nextLinkClassName={"page-link"}
-        breakClassName={"page-item"}
-        breakLinkClassName={"page-link"}
-        activeClassName={"active"}
-    />
+    {loading && <p>Loading...</p>}
+      {!hasMore && <p>No more posts to load.</p>}
         </div>
      );
 }
