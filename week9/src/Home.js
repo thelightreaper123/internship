@@ -1,9 +1,8 @@
-import React,{useState, useEffect} from "react";
+import React,{useState} from "react";
 import { Form } from "react-bootstrap";
 import MovieResult from "./MovieResult";
 import { ToastContainer,toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"
-import ReactPaginate from 'react-paginate';
 function Home() {
     const [movies, setMovies]= useState([]);
     const [title, setTitle]= useState('');
@@ -44,24 +43,22 @@ const apiError =()=>{
 }
 const searchMovie = async(e)=>{
     e.preventDefault();
-    setLoading(true);
+    setHasMore(true);
     try{
         const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${title}`        
 const res=await fetch(url);
 const data = await res.json();
-console.log(data);
 const SearchInput = /^(?=.*[a-zA-Z0-9])/;
     if (!SearchInput.test(title)){
       noInput();
       return;
     }
-setPage(page + 1);
 setMovies(data.results)
-if(data.total_results==0){
+if(data.total_results===0){
     notFound();
 }
-setLoading(false);
-setHasMore(true);
+setPage(page + 1);
+
     }catch(e){
    apiError();
     }
@@ -70,7 +67,7 @@ setHasMore(true);
 
 
 function saveUserSearch(){
-    if(title==''){
+    if(title===''){
         return;
     }else{
         searchHistory.push(title);
@@ -78,11 +75,19 @@ function saveUserSearch(){
 }
 let lastFiveSearches = searchHistory.slice(-5);
 const HandleScroll = () => {
-    setPage(page + 1);
+    setLoading(true);
     const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${title}&page=${page}`
     return fetch(url)
     .then((res)=> res.json())
-    .then((data)=>setMovies(data.results));
+    .then((data)=>{
+        const newMovies = data.results;
+        setMovies([...movies, ...newMovies]);
+        setPage(page + 1);
+        if (newMovies.length===0){
+            setHasMore(false);
+        }
+        setLoading(false);
+    });
 }
 window.onscroll=() => {
     if (
@@ -93,7 +98,7 @@ window.onscroll=() => {
        
         HandleScroll();
       }
-      
+      return;
     }
   };
     return ( 
@@ -112,6 +117,7 @@ window.onscroll=() => {
     <div className="container">
         {movies.map((movieReq)=><MovieResult key={movieReq.id} {...movieReq}/>)}
     </div>
+    <ToastContainer/>
     {loading && <p>Loading...</p>}
       {!hasMore && <p>No more posts to load....</p>}
         </div>
