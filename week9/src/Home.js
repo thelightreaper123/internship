@@ -4,13 +4,13 @@ import MovieResult from "./MovieResult";
 import { ToastContainer,toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"
 function Home() {
+    
     const [movies, setMovies]= useState([]);
     const [title, setTitle]= useState('');
     const [searchHistory]=useState([]);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
-
     const notFound =()=>{
         toast.error('result not found',{
             position: "top-right", 
@@ -70,10 +70,15 @@ function saveUserSearch(){
     if(title===''){
         return;
     }else{
-        searchHistory.push(title);
+        searchHistory.push(title)
+        localStorage.setItem('searchHistory', JSON.stringify([searchHistory]));
     }
 }
+const storedSearchHistory = JSON.parse(localStorage.getItem('searchHistory')) || []
 let lastFiveSearches = searchHistory.slice(-5);
+
+
+
 const HandleScroll = () => {
     setLoading(true);
     const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${title}&page=${page}`
@@ -87,6 +92,7 @@ const HandleScroll = () => {
             setHasMore(false);
         }
         setLoading(false);
+        console.log(lastFiveSearches);
     });
 }
 window.onscroll=() => {
@@ -110,7 +116,7 @@ window.onscroll=() => {
 {lastFiveSearches.length !== 0 && 
 (<div>
 <span style={{color:"white"}}>your last {lastFiveSearches.length} searches are</span>
-<ul>{lastFiveSearches.map(e => { return <li style={{color:"white"}}>{e}</li>})}</ul>
+<ul>{lastFiveSearches.map((item, index)=> { return <li key={index} style={{color:"white"}}>{item}</li>})}</ul>
 </div>)
 }
 </Form>
