@@ -4,13 +4,14 @@ import MovieResult from "./MovieResult";
 import { ToastContainer,toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"
 function Home() {
+    
     const [movies, setMovies]= useState([]);
     const [title, setTitle]= useState('');
     const [searchHistory]=useState([]);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
-
+    const [language, setLanguage] = useState('en-US');
     const notFound =()=>{
         toast.error('result not found',{
             position: "top-right", 
@@ -42,10 +43,12 @@ const apiError =()=>{
 });
 }
 const searchMovie = async(e)=>{
-    e.preventDefault();
+    if (e) {
+        e.preventDefault();
+      }
     setHasMore(true);
     try{
-        const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${title}`        
+        const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${title}&language=${language}&page=${page}`        
 const res=await fetch(url);
 const data = await res.json();
 const SearchInput = /^(?=.*[a-zA-Z0-9])/;
@@ -53,12 +56,16 @@ const SearchInput = /^(?=.*[a-zA-Z0-9])/;
       noInput();
       return;
     }
-setMovies(data.results)
+    const newMovies = data.results;
+    setMovies([...movies, ...newMovies]);
 if(data.total_results===0){
     notFound();
 }
-setPage(page + 1);
-
+if (newMovies.length===0){
+    setHasMore(false);
+}else{
+    setPage(page + 1);
+}
     }catch(e){
    apiError();
     }
@@ -67,27 +74,28 @@ setPage(page + 1);
 
 
 function saveUserSearch(){
-    if(title===''){
+    if (title === '') {
         return;
-    }else{
-        searchHistory.push(title);
+      } else {
+        searchHistory.unshift(title);
+        if (searchHistory.length > 5) {
+          searchHistory.pop();
+        }
+        
+        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+        setMovies([]);
+        setPage(1);
     }
 }
-let lastFiveSearches = searchHistory.slice(-5);
+const storedSearchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+
+
+
+
 const HandleScroll = () => {
     setLoading(true);
-    const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${title}&page=${page}`
-    return fetch(url)
-    .then((res)=> res.json())
-    .then((data)=>{
-        const newMovies = data.results;
-        setMovies([...movies, ...newMovies]);
-        setPage(page + 1);
-        if (newMovies.length===0){
-            setHasMore(false);
-        }
-        setLoading(false);
-    });
+    searchMovie();
+    setLoading(false);
 }
 window.onscroll=() => {
     if (
@@ -107,12 +115,34 @@ window.onscroll=() => {
 <input className="search-bar" type="text" placeholder="Search movies" value={title} onChange={e => setTitle(e.target.value)} name="title"></input>
 <button className="srch-btn" onClick={saveUserSearch}>Search</button>
 <br></br>
-{lastFiveSearches.length !== 0 && 
-(<div>
-<span style={{color:"white"}}>your last {lastFiveSearches.length} searches are</span>
-<ul>{lastFiveSearches.map(e => { return <li style={{color:"white"}}>{e}</li>})}</ul>
-</div>)
-}
+<select name="select-language" id="select-language" defaultValue={language} onChange={(e)=> setLanguage(e.target.value)} on>
+    <option value='en-us'>English</option>
+    <option value='ja-JP'>Japanese</option>
+    <option value='es-ES'>Spanish</option>
+    <option value='fr-FR'>French</option>
+    <option value='de-DE'>German</option>
+    <option value='zh-CN'>Chinese</option>
+    <option value='ru-RU'>Russian</option>
+    <option value='it-IT'>Italian</option>
+    <option value='ko-KR'>Korean</option>
+</select>
+<br></br>
+{storedSearchHistory.length !== 0 && (
+          <div>
+            <span style={{ color: "white" }}>
+              Your last {storedSearchHistory.length} searches are
+            </span>
+            <ul>
+              {storedSearchHistory.map((item, index) => {
+                return (
+                  <li key={index} style={{ color: "white" }}>
+                    {item}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
 </Form>
     <div className="container">
         {movies.map((movieReq)=><MovieResult key={movieReq.id} {...movieReq}/>)}
