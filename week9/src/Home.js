@@ -1,17 +1,19 @@
-import React,{useState} from "react";
+import React,{useState, useEffect} from "react";
 import { Form } from "react-bootstrap";
 import MovieResult from "./MovieResult";
 import { ToastContainer,toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"
 function Home() {
-    
+  const storedLanguage = JSON.parse(localStorage.getItem('language')) || [];
     const [movies, setMovies]= useState([]);
     const [title, setTitle]= useState('');
-    const [searchHistory]=useState([]);
+    const [searchHistory, setSearchHistory]=useState([]);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
-    const [language, setLanguage] = useState('en-US');
+    const [language, setLanguage] = useState(storedLanguage);
+    const [titleChanged, setTitleChanged] = useState(false);
+    localStorage.setItem('language', JSON.stringify(language));
     const notFound =()=>{
         toast.error('result not found',{
             position: "top-right", 
@@ -77,16 +79,20 @@ function saveUserSearch(){
     if (title === '') {
         return;
       } else {
-        searchHistory.unshift(title);
-        if (searchHistory.length > 5) {
-          searchHistory.pop();
+        const uniqueSearchHistory = new Set(searchHistory);
+        uniqueSearchHistory.add(title);
+        const updatedSearchHistory = [...uniqueSearchHistory];
+        if (updatedSearchHistory.length > 5) {
+          updatedSearchHistory.splice(0, updatedSearchHistory.length - 5);
         }
         
-        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+        setSearchHistory(updatedSearchHistory);
+  localStorage.setItem('searchHistory', JSON.stringify(updatedSearchHistory));
         setMovies([]);
         setPage(1);
     }
 }
+
 const storedSearchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
 
 
@@ -109,6 +115,11 @@ window.onscroll=() => {
       return;
     }
   };
+  const handleReSearch = (search) => {
+    setTitle(search);
+   searchMovie();
+  };
+  
     return ( 
         <div className="main">
 <Form onSubmit={searchMovie}>
@@ -135,7 +146,7 @@ window.onscroll=() => {
             <ul>
               {storedSearchHistory.map((item, index) => {
                 return (
-                  <li key={index} style={{ color: "white" }}>
+                  <li key={index} style={{ color: "white", cursor: "pointer"}} onClick={() => handleReSearch(item)}>
                     {item}
                   </li>
                 );
