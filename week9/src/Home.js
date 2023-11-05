@@ -1,4 +1,4 @@
-import React,{useState, useEffect} from "react";
+import React,{useState} from "react";
 import { Form } from "react-bootstrap";
 import MovieResult from "./MovieResult";
 import { ToastContainer,toast} from "react-toastify";
@@ -12,7 +12,6 @@ function Home() {
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const [language, setLanguage] = useState(storedLanguage);
-    const [titleChanged, setTitleChanged] = useState(false);
     localStorage.setItem('language', JSON.stringify(language));
     const notFound =()=>{
         toast.error('result not found',{
@@ -44,7 +43,7 @@ const apiError =()=>{
         draggable: false,       
 });
 }
-const searchMovie = async(e)=>{
+const searchMovieHistory = async(e)=>{
     if (e) {
         e.preventDefault();
       }
@@ -53,26 +52,50 @@ const searchMovie = async(e)=>{
         const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${title}&language=${language}&page=${page}`        
 const res=await fetch(url);
 const data = await res.json();
-const SearchInput = /^(?=.*[a-zA-Z0-9])/;
-    if (!SearchInput.test(title)){
-      noInput();
-      return;
-    }
-    const newMovies = data.results;
-    setMovies([...movies, ...newMovies]);
+    setMovies(data.results)
 if(data.total_results===0){
     notFound();
 }
-if (newMovies.length===0){
+if (movies.length===0){
     setHasMore(false);
-}else{
-    setPage(page + 1);
 }
     }catch(e){
    apiError();
     }
     
 }
+
+const searchMovie = async(e)=>{
+  if (e) {
+      e.preventDefault();
+    }
+  setHasMore(true);
+  try{
+      const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${title}&language=${language}&page=${page}`        
+const res=await fetch(url);
+const data = await res.json();
+const SearchInput = /^(?=.*[a-zA-Z0-9])/;
+  if (!SearchInput.test(title)){
+    noInput();
+    return;
+  }
+  const newMovies = data.results;
+  setMovies([...movies, ...newMovies]);
+if(data.total_results===0){
+  notFound();
+}
+if (newMovies.length===0){
+  setHasMore(false);
+}else{
+  setPage(page + 1);
+}
+  }catch(e){
+ apiError();
+  }
+  
+}
+
+
 
 
 function saveUserSearch(){
@@ -117,9 +140,8 @@ window.onscroll=() => {
   };
   const handleReSearch = (search) => {
     setTitle(search);
-   searchMovie();
+    searchMovieHistory();
   };
-  
     return ( 
         <div className="main">
 <Form onSubmit={searchMovie}>
