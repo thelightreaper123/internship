@@ -5,9 +5,10 @@ import { ToastContainer,toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"
 function Home() {
   const storedLanguage = JSON.parse(localStorage.getItem('language')) || [];
+  const storedSearchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
     const [movies, setMovies]= useState([]);
     const [title, setTitle]= useState('');
-    const [searchHistory, setSearchHistory]=useState([]);
+    const [searchHistory, setSearchHistory]=useState(storedSearchHistory);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
@@ -43,28 +44,8 @@ const apiError =()=>{
         draggable: false,       
 });
 }
-const searchMovieHistory = async(e)=>{
-    if (e) {
-        e.preventDefault();
-      }
-    setHasMore(true);
-    try{
-        const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${title}&language=${language}&page=${page}`        
-const res=await fetch(url);
-const data = await res.json();
-    setMovies(data.results)
-if(data.total_results===0){
-    notFound();
-}
-if (movies.length===0){
-    setHasMore(false);
-}
-    }catch(e){
-   apiError();
-    }
-    
-}
 
+    
 const searchMovie = async(e)=>{
   if (e) {
       e.preventDefault();
@@ -102,21 +83,19 @@ function saveUserSearch(){
     if (title === '') {
         return;
       } else {
-        const uniqueSearchHistory = new Set(searchHistory);
-        uniqueSearchHistory.add(title);
-        const updatedSearchHistory = [...uniqueSearchHistory];
-        if (updatedSearchHistory.length > 5) {
-          updatedSearchHistory.splice(0, updatedSearchHistory.length - 5);
+        const updatedSearchHistory = [title, ...searchHistory.filter(search => search !== title)];
+        while (updatedSearchHistory.length > 5) {
+          updatedSearchHistory.pop();
         }
-        
+    
         setSearchHistory(updatedSearchHistory);
-  localStorage.setItem('searchHistory', JSON.stringify(updatedSearchHistory));
+        localStorage.setItem('searchHistory', JSON.stringify(updatedSearchHistory));
         setMovies([]);
         setPage(1);
     }
 }
 
-const storedSearchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+
 
 
 
@@ -138,10 +117,24 @@ window.onscroll=() => {
       return;
     }
   };
-  const handleReSearch = (search) => {
+  const handleReSearch = async (search) => {
     setTitle(search);
-    searchMovieHistory();
+    try {
+      const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${search}&language=${language}&page=${page}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      setMovies(data.results);
+      if (data.total_results === 0) {
+        notFound();
+      }
+      if (data.results.length === 0) {
+        setHasMore(false);
+      }
+    } catch (e) {
+      apiError();
+    }
   };
+  
     return ( 
         <div className="main">
 <Form onSubmit={searchMovie}>
