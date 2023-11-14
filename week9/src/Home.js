@@ -120,7 +120,7 @@ window.onscroll=() => {
   const handleReSearch = async (search) => {
     setTitle(search);
     try {
-      const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${search}&language=${language}&page=${page}`;
+      const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${search}&language=${language}`;
       const res = await fetch(url);
       const data = await res.json();
       setMovies(data.results);
