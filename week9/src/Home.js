@@ -84,8 +84,8 @@ function saveUserSearch(){
         return;
       } else {
         const updatedSearchHistory = [title, ...searchHistory.filter(search => search !== title)];
-        while (updatedSearchHistory.length > 5) {
-          updatedSearchHistory.pop();
+        if (updatedSearchHistory.length > 5) {
+          updatedSearchHistory.slice(4);
         }
     
         setSearchHistory(updatedSearchHistory);
@@ -130,6 +130,9 @@ window.onscroll=() => {
       if (data.results.length === 0) {
         setHasMore(false);
       }
+      const updatedSearchHistory = [search, ...searchHistory.filter(item => item !== search)];
+    setSearchHistory(updatedSearchHistory);
+    localStorage.setItem('searchHistory', JSON.stringify(updatedSearchHistory));
     } catch (e) {
       apiError();
     }
