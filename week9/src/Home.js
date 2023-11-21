@@ -83,10 +83,8 @@ function saveUserSearch(){
     if (title === '') {
         return;
       } else {
-        const updatedSearchHistory = [title, ...searchHistory.filter(search => search !== title)];
-        if (updatedSearchHistory.length > 5) {
-          updatedSearchHistory.slice(4);
-        }
+        let updatedSearchHistory = [title, ...searchHistory.filter(search => search !== title)];
+        updatedSearchHistory = updatedSearchHistory.slice(0, 5);
     
         setSearchHistory(updatedSearchHistory);
         localStorage.setItem('searchHistory', JSON.stringify(updatedSearchHistory));
