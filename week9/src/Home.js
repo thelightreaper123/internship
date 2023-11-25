@@ -4,14 +4,16 @@ import MovieResult from "./MovieResult";
 import { ToastContainer,toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"
 function Home() {
-    
+  const storedLanguage = JSON.parse(localStorage.getItem('language')) || [];
+  const storedSearchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
     const [movies, setMovies]= useState([]);
     const [title, setTitle]= useState('');
-    const [searchHistory]=useState([]);
+    const [searchHistory, setSearchHistory]=useState(storedSearchHistory);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
-    const [language, setLanguage] = useState('en-US');
+    const [language, setLanguage] = useState(storedLanguage);
+    localStorage.setItem('language', JSON.stringify(language));
     const notFound =()=>{
         toast.error('result not found',{
             position: "top-right", 
@@ -42,52 +44,56 @@ const apiError =()=>{
         draggable: false,       
 });
 }
+
+    
 const searchMovie = async(e)=>{
-    if (e) {
-        e.preventDefault();
-      }
-    setHasMore(true);
-    try{
-        const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${title}&language=${language}&page=${page}`        
+  if (e) {
+      e.preventDefault();
+    }
+  setHasMore(true);
+  try{
+      const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${title}&language=${language}&page=${page}`        
 const res=await fetch(url);
 const data = await res.json();
 const SearchInput = /^(?=.*[a-zA-Z0-9])/;
-    if (!SearchInput.test(title)){
-      noInput();
-      return;
-    }
-    const newMovies = data.results;
-    setMovies([...movies, ...newMovies]);
+  if (!SearchInput.test(title)){
+    noInput();
+    return;
+  }
+  const newMovies = data.results;
+  setMovies([...movies, ...newMovies]);
 if(data.total_results===0){
-    notFound();
+  notFound();
 }
 if (newMovies.length===0){
-    setHasMore(false);
+  setHasMore(false);
 }else{
-    setPage(page + 1);
+  setPage(page + 1);
 }
-    }catch(e){
-   apiError();
-    }
-    
+  }catch(e){
+ apiError();
+  }
+  
 }
+
+
 
 
 function saveUserSearch(){
     if (title === '') {
         return;
       } else {
-        searchHistory.unshift(title);
-        if (searchHistory.length > 5) {
-          searchHistory.pop();
-        }
-        
-        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+        let updatedSearchHistory = [title, ...searchHistory.filter(search => search !== title)];
+        updatedSearchHistory = updatedSearchHistory.slice(0, 5);
+    
+        setSearchHistory(updatedSearchHistory);
+        localStorage.setItem('searchHistory', JSON.stringify(updatedSearchHistory));
         setMovies([]);
         setPage(1);
     }
 }
-const storedSearchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+
+
 
 
 
@@ -109,6 +115,27 @@ window.onscroll=() => {
       return;
     }
   };
+  const handleReSearch = async (search) => {
+    setTitle(search);
+    try {
+      const url = `https://api.themoviedb.org/3/search/movie?api_key=b7d68d57b175ae831b45672648c74d7b&query=${search}&language=${language}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      setMovies(data.results);
+      if (data.total_results === 0) {
+        notFound();
+      }
+      if (data.results.length === 0) {
+        setHasMore(false);
+      }
+      const updatedSearchHistory = [search, ...searchHistory.filter(item => item !== search)];
+    setSearchHistory(updatedSearchHistory);
+    localStorage.setItem('searchHistory', JSON.stringify(updatedSearchHistory));
+    } catch (e) {
+      apiError();
+    }
+  };
+  
     return ( 
         <div className="main">
 <Form onSubmit={searchMovie}>
@@ -135,7 +162,7 @@ window.onscroll=() => {
             <ul>
               {storedSearchHistory.map((item, index) => {
                 return (
-                  <li key={index} style={{ color: "white" }}>
+                  <li key={index} style={{ color: "white", cursor: "pointer"}} onClick={() => handleReSearch(item)}>
                     {item}
                   </li>
                 );
